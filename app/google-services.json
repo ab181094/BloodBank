@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "403544043045",
+    "firebase_url": "https://bloodbank-10759.firebaseio.com",
+    "project_id": "bloodbank-10759",
+    "storage_bucket": "bloodbank-10759.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:403544043045:android:07cf8f926fa6b1a2",
+        "android_client_info": {
+          "package_name": "com.csecu.amrit.bloodbank"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "403544043045-45ems2s654jhilmrddqoiidk9jhfugn5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.csecu.amrit.bloodbank",
+            "certificate_hash": "77874fa189a3ff0d49f302756c51e1d2b24d2b53"
+          }
+        },
+        {
+          "client_id": "403544043045-5dfr3a6vffj3euq2o6g7nrrejdsdn913.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRPFv64sNVnh97EisjC303ZHmxBDIafjs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "403544043045-5dfr3a6vffj3euq2o6g7nrrejdsdn913.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
