@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -39,8 +44,33 @@ public class CustomListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (donorList.get(position).getDate() != null) {
-            return 0;
+        String donationDate = donorList.get(position).getDate();
+        float days = 0;
+        if (donationDate != null) {
+            String[] values = donationDate.split("[\\-]");
+            String result = "";
+            for (String s : values) {
+                result = result + s + " ";
+            }
+            final Calendar c = Calendar.getInstance();
+            int day = c.get(Calendar.DAY_OF_MONTH);
+            int month = c.get(Calendar.MONTH);
+            int year = c.get(Calendar.YEAR);
+            String newDate = year + " " + month + " " + day;
+            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy MM dd");
+            try {
+                Date firstDate = myFormat.parse(result);
+                Date secondDate = myFormat.parse(newDate);
+                long diff = secondDate.getTime() - firstDate.getTime();
+                days = (diff / (1000 * 60 * 60 * 24));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.d("NewDate", e.toString());
+            }
+            if (days > 90) {
+                return 1;
+            } else
+                return 0;
         } else
             return 1;
     }
@@ -59,7 +89,7 @@ public class CustomListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewHolder.tvName.setText(name);
             viewHolder.tvGroup.setText(group);
 
-            if (donor.getPicture().length() > 0) {
+            if (donor.getPicture() != null) {
                 final StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
                 mStorageRef.child("Photos/" + donor.getPicture()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
@@ -87,7 +117,7 @@ public class CustomListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewHolder.tvName.setText(name);
             viewHolder.tvGroup.setText(group);
 
-            if (donor.getPicture().length() > 0) {
+            if (donor.getPicture() != null) {
                 final StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
                 mStorageRef.child("Photos/" + donor.getPicture()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
