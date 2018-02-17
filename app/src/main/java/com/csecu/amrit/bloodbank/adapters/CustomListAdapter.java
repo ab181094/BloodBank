@@ -1,14 +1,12 @@
 package com.csecu.amrit.bloodbank.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,7 +26,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Amrit on 2/16/2018.
  */
 
-public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.MyViewHolder> {
+public class CustomListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<Donor> donorList;
     private AllOperations operations;
     private Context context;
@@ -40,38 +38,71 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.My
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
-        Donor donor = donorList.get(position);
+    public int getItemViewType(int position) {
+        if (donorList.get(position).getDate() != null) {
+            return 0;
+        } else
+            return 1;
+    }
 
-        String name = donor.getName();
-        String group = donor.getBlood();
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position) == 0) {
+            final InvalidViewHolder viewHolder = (InvalidViewHolder) holder;
+            Donor donor = donorList.get(position);
 
-        name = operations.decodeString(name);
+            String name = donor.getName();
+            String group = donor.getBlood();
 
-        holder.tvName.setText(name);
-        holder.tvGroup.setText(group);
+            name = operations.decodeString(name);
 
-        if (donor.getPicture().length() > 0) {
-            holder.linearLayout.setBackgroundColor(Color.GREEN);
+            viewHolder.tvName.setText(name);
+            viewHolder.tvGroup.setText(group);
+
+            if (donor.getPicture().length() > 0) {
+                final StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                mStorageRef.child("Photos/" + donor.getPicture()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(context)
+                                .load(uri)
+                                .into(viewHolder.imageView);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        operations.errorToast("Failed to load images");
+                    }
+                });
+            }
         } else {
-            holder.linearLayout.setBackgroundColor(Color.RED);
-        }
+            final ValidViewHolder viewHolder = (ValidViewHolder) holder;
+            Donor donor = donorList.get(position);
 
-        if (donor.getPicture().length() > 0) {
-            final StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child("Photos/" + donor.getPicture()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Glide.with(context)
-                            .load(uri)
-                            .into(holder.imageView);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    operations.errorToast("Failed to load images");
-                }
-            });
+            String name = donor.getName();
+            String group = donor.getBlood();
+
+            name = operations.decodeString(name);
+
+            viewHolder.tvName.setText(name);
+            viewHolder.tvGroup.setText(group);
+
+            if (donor.getPicture().length() > 0) {
+                final StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                mStorageRef.child("Photos/" + donor.getPicture()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(context)
+                                .load(uri)
+                                .into(viewHolder.imageView);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        operations.errorToast("Failed to load images");
+                    }
+                });
+            }
         }
     }
 
@@ -81,10 +112,16 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.My
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.donor_list,
-                parent, false);
-        return new MyViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == 0) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.donor_invalid_list,
+                    parent, false);
+            return new InvalidViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.donor_valid_list,
+                    parent, false);
+            return new ValidViewHolder(view);
+        }
     }
 
     public Donor getItem(int position) {
@@ -94,19 +131,31 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.My
     /**
      * View holder class
      */
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class InvalidViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView imageView;
         private TextView tvName;
         private TextView tvGroup;
-        private LinearLayout linearLayout;
 
-        private MyViewHolder(View view) {
+        private InvalidViewHolder(View view) {
             super(view);
 
-            imageView = view.findViewById(R.id.user_image);
-            tvName = view.findViewById(R.id.tv_name);
-            tvGroup = view.findViewById(R.id.tv_group);
-            linearLayout = view.findViewById(R.id.layout_availability);
+            imageView = view.findViewById(R.id.invalid_user_image);
+            tvName = view.findViewById(R.id.invalid_tv_name);
+            tvGroup = view.findViewById(R.id.invalid_tv_group);
+        }
+    }
+
+    class ValidViewHolder extends RecyclerView.ViewHolder {
+        private CircleImageView imageView;
+        private TextView tvName;
+        private TextView tvGroup;
+
+        private ValidViewHolder(View view) {
+            super(view);
+
+            imageView = view.findViewById(R.id.valid_user_image);
+            tvName = view.findViewById(R.id.valid_tv_name);
+            tvGroup = view.findViewById(R.id.valid_tv_group);
         }
     }
 }

@@ -16,7 +16,7 @@
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/user_image"
+                android:id="@+id/invalid_user_image"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:padding="10dp"
@@ -31,7 +31,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_name"
+                    android:id="@+id/invalid_tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
@@ -45,7 +45,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_group"
+                    android:id="@+id/invalid_tv_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
@@ -61,10 +61,10 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_availability"
                 android:layout_width="5dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@color/colorRed"
                 android:orientation="vertical" />
         </LinearLayout>
     </android.support.v7.widget.CardView>

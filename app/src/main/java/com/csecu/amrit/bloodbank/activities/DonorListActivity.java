@@ -5,10 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.csecu.amrit.bloodbank.R;
 import com.csecu.amrit.bloodbank.adapters.CustomListAdapter;
 import com.csecu.amrit.bloodbank.controllers.AllOperations;
+import com.csecu.amrit.bloodbank.listener.RecyclerItemListener;
 import com.csecu.amrit.bloodbank.models.Donor;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +50,20 @@ public class DonorListActivity extends AppCompatActivity {
         donorRef = database.getReference("Donor");
         operations = new AllOperations(this);
         loadList();
+
+        recyclerView.addOnItemTouchListener(new RecyclerItemListener(getApplicationContext(),
+                recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
+            @Override
+            public void onClickItem(View v, int position) {
+                Donor donor = adapter.getItem(position);
+                operations.successToast(donor.getName());
+            }
+
+            @Override
+            public void onLongClickItem(View v, int position) {
+
+            }
+        }));
 
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
